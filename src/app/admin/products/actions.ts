@@ -41,12 +41,12 @@ export async function addProduct(prevState: unknown, formData: FormData) {
 
     const data = result.data
 
-    await fs.mkdir("products", { recursive: true })
-    const filePath = `products/${crypto.randomUUID()}-${data.file.name}`
+    await fs.mkdir("productFiles", { recursive: true })
+    const filePath = `productFiles/${crypto.randomUUID()}-${data.file.name}`
     await fs.writeFile(filePath, Buffer.from(await data.file.arrayBuffer()))
 
-    await fs.mkdir("public/products", { recursive: true })
-    const imagePath = `/products/${crypto.randomUUID()}-${data.image.name}`
+    await fs.mkdir("public/productImages", { recursive: true })
+    const imagePath = `/productImages/${crypto.randomUUID()}-${data.image.name}`
     await fs.writeFile(
         `public${imagePath}`,
         Buffer.from(await data.image.arrayBuffer())
@@ -131,6 +131,11 @@ export async function toggleProductAvailability(
 
     revalidatePath("/")
     revalidatePath("/products")
+}
+
+export async function getProductById(id: string) {
+    const product = await db.product.findUnique({ where: { id } })
+    return product;
 }
 
 export async function deleteProduct(id: string) {
